@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GoalArea : MonoBehaviour {
     public static bool goal;
+    public AudioSource bgm;
+    public AudioSource goalBgm;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +22,10 @@ public class GoalArea : MonoBehaviour {
         if(other.gameObject.tag == "Player")
         {
             goal = true;
-
+            other.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+            bgm.Stop();
+            //other.gameObject.GetComponent<AudioSource>().Stop();
+            goalBgm.Play();
         }
     }
 }

@@ -12,8 +12,9 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private Vector3 m_CamForward;             // The current forward direction of the camera
         private Vector3 m_Move;
         private bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
+        private bool m_Slide;
+        AudioSource getSE;
 
-        
         private void Start()
         {
             // get the transform of the main camera
@@ -30,6 +31,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
             // get the third person character ( this should never be null due to require component )
             m_Character = GetComponent<ThirdPersonCharacter>();
+            getSE = GetComponent<AudioSource>();
         }
 
 
@@ -38,6 +40,10 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             if (!m_Jump)
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+            }
+            if (!m_Slide)
+            {
+                m_Slide = CrossPlatformInputManager.GetButtonDown("Fire1");
             }
         }
 
@@ -68,8 +74,18 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 #endif
 
             // pass all parameters to the character control script
-            m_Character.Move(m_Move, crouch, m_Jump);
+            m_Character.Move(m_Move, crouch, m_Jump, m_Slide);
             m_Jump = false;
+            m_Slide = false;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if(other.gameObject.tag == "Item")
+            {
+                other.gameObject.SetActive(false);
+                getSE.Play();
+            }
         }
     }
 }
